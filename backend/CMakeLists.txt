@@ -10,7 +10,8 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/Thread
     ${CMAKE_SOURCE_DIR}/nlohmann
     ${CMAKE_SOURCE_DIR}/httplib
-    ${CMAKE_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/Server/include
+    ${CMAKE_SOURCE_DIR}/
     )
 set(PATH_TO_PARSER "${CMAKE_SOURCE_DIR}/Parser")
 
@@ -18,6 +19,7 @@ set(PATH_TO_PARSER "${CMAKE_SOURCE_DIR}/Parser")
 add_executable(${PROJECT_NAME}
     ${PATH_TO_PARSER}/Parser.cpp
     ${CMAKE_SOURCE_DIR}/main.cpp
+    ${CMAKE_SOURCE_DIR}/Server/src/Server.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} pthread)

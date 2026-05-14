@@ -17,7 +17,7 @@ public:
     ~Parser() = default;
 
     // Запускает обход rootPath, сразу возвращает future
-    std::future<json> parse(const std::string& rootPath);
+    std::future<json> parse(const std::string& root_path);
 
 private:
     thread_pool& m_pool;
@@ -34,8 +34,8 @@ private:
         bool finished = false;
     };
 
-    // Обрабатывает одну директорию: классифицирует файлы,
-    // добавляет поддиректории как новые задачи
-    void processDirectory(const std::string& dirPath,
+    // Обрабатывает одну директорию классифицирует файлы,
+    // добавляет поддиректории как новые задачи в пул потоков
+    void processDirectory(const std::string& dir_path,
                           std::shared_ptr<SharedData> data);
 };

@@ -2,21 +2,22 @@
 #include <algorithm>
 #include <set>
 #include <unistd.h>
+#include <iostream>
 
 #include "Parser.h"
 #include "output_mutex.h"
 
 const std::set<std::string> audio_extension = {
-    ".mp3", ".wav", ".flac", ".aac", ".wma"
-};
-const std::set<std::string> video_extension = {
-    ".mpg", ".mpeg", ".mp4",
-};
-const std::set<std::string> image_extension = {
-    ".jpg", ".jpeg", ".png", ".gif", ".bmp"
-};
+    ".mp3", ".wav", ".flac", ".aac", ".wma" };
 
-Parser::Parser(thread_pool& pool) : m_pool(pool) {}
+const std::set<std::string> video_extension = {
+    ".mpg", ".mpeg", ".mp4" };
+
+const std::set<std::string> image_extension = {
+    ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
+
+Parser::Parser(thread_pool& pool) : m_pool(pool) 
+    {}
 
 std::future<json> Parser::parse(const std::string& root_path)
 {
@@ -47,12 +48,12 @@ std::future<json> Parser::parse(const std::string& root_path)
 }
 
 void Parser::processDirectory(const std::string &dir_path,
-                              std::shared_ptr<SharedData> data) {
-
+                                std::shared_ptr<SharedData> data) 
+{
     
-                
+    // если каталог существует и он каталог
     if (std::filesystem::exists(dir_path) && std::filesystem::is_directory(dir_path)) {
-
+        // проверяем можем ли мы его открыть
         std::error_code code;
         std::filesystem::directory_iterator it = std::filesystem::directory_iterator(dir_path, code);
         if (code) {
@@ -61,14 +62,13 @@ void Parser::processDirectory(const std::string &dir_path,
         
         } else {
             for (const auto &entry : std::filesystem::directory_iterator(dir_path)) {
-
+                // Проверяем является ли он ссылкой, и если да то не рассматриваем
                 if (entry.is_symlink()) {
                     continue;
                 }
 
                 std::filesystem::path path = entry.path();
-                //std::filesystem::file_status status = std::filesystem::status(entry);
-                //std::filesystem::perms perms = status.permissions();
+                // Проверяем хватает ли у текущего пользователя прав его прочесть
                 if (::access(path.c_str(), R_OK) == -1) {
                     std::lock_guard<std::mutex> lock(output_mutex);
                     std::cerr << "Could not get access to " << path.c_str() << '\n';
@@ -78,7 +78,6 @@ void Parser::processDirectory(const std::string &dir_path,
                 if (entry.is_regular_file()) {
 
                     std::string extension = entry.path().extension().string();
-                    //std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
                     std::string name = entry.path().filename().string();
 
                     std::lock_guard<std::mutex> lock(data->dataMutex);
@@ -101,7 +100,7 @@ void Parser::processDirectory(const std::string &dir_path,
             }
         }
     }
-
+    // уменьшаем счетчик запущенных подзадач
     --data->pending;
     if (data->pending == 0) {
         // Все задачи выполнены – оповещаем ожидающий поток

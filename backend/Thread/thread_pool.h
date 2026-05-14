@@ -3,7 +3,6 @@
 
 #include <atomic>
 #include <future>
-#include <iostream>
 #include <vector>
 
 #include "thread_safe_queue.h"
@@ -65,7 +64,7 @@ public:
     void push_task(function_wrapper task) {
         pool_work_queue.push(std::make_shared<function_wrapper>(std::move(task)));
         condition.notify_one();
-        std::cout << "pushed task" << std::endl;
+        //std::cout << "pushed task" << std::endl;
     }
 
     void run_pending_task() { //this method aimed to call from other thrdeam, not into thread
