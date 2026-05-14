@@ -78,7 +78,7 @@ int startServer(std::string start_directory, std::size_t polling_period) {
     });
 
     // SSE-поток. Не закрывается после отправки и сервер раз в polling_period отправляет данные
-    svr.Get("/media_files", [&](const httplib::Request&, httplib::Response& res) {
+    svr.Get("/media_files/stream", [&](const httplib::Request&, httplib::Response& res) {
         res.set_content_provider(
             "text/event-stream", // Специальная строка, получил которую библиотека начинает работать по протоколу SSE
             [](size_t, httplib::DataSink& sink) {
@@ -93,6 +93,11 @@ int startServer(std::string start_directory, std::size_t polling_period) {
             [](bool) {} // не вызываем функцию при закрытии соединения
         );
     });
+
+    svr.Get("/media_files", [&](const httplib::Request&, httplib::Response& res) {
+        std::lock_guard<std::mutex> lock(read_json);
+        res.set_content(information.dump(), "application/json");
+});
 
     std::cout << "Server listening on http://0.0.0.0:1234\n";
     svr.listen("0.0.0.0", 1234);

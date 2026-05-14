@@ -1,5 +1,5 @@
 const tbody = document.querySelector('#media-table tbody') as HTMLTableSectionElement;
-const source = new EventSource('/media_files');
+const source = new EventSource('/media_files/stream');
 
 source.onmessage = (event: MessageEvent) => {
     const data = JSON.parse(event.data);
