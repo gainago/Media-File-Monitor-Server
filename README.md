@@ -19,3 +19,11 @@ Base URL: `http://localhost:1234`
 - CMake(>=3.16), make, g++(C++17).
 - nlogmann/json.hpp, httplib.h встроил в проект для удобства сборки.
 
+# Инструкция по сборке.
+- В корне проекта выполните:
+`mkdir build`
+`cd build`
+`cmake ..`
+`make`
+
+
